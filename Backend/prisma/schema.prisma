@@ -9,13 +9,13 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   password  String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   cartItems CartItem[] // Relation to CartItem
+  orders    Order[]   // Relation to Order
 }
 
 model FishDetails {
@@ -26,6 +26,7 @@ model FishDetails {
   price       Float
   link        String
   cartItems   CartItem[] // Relation to CartItem
+  orders      Order[]   // Relation to Order
 }
 
 model CartItem {
@@ -35,5 +36,16 @@ model CartItem {
   quantity  Int      @default(1)
 
   user      User     @relation(fields: [userEmail], references: [email])
+  fish      FishDetails @relation(fields: [fishId], references: [id])
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userEmail String
+  fishId    Int
+  quantity  Int
+  createdAt DateTime @default(now())
+
+  user      User      @relation(fields: [userEmail], references: [email])
   fish      FishDetails @relation(fields: [fishId], references: [id])
 }

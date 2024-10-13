@@ -1,4 +1,3 @@
-// SwipeCards.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,45 +5,56 @@ const SwipeCards = () => {
     const [cards, setCards] = useState([]);
     const navigate = useNavigate();
 
-    const handleAddToCart = (product) => {
-    const currentCart = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-    // Check if the product already exists in the cart
-    const existingItemIndex = currentCart.findIndex(item => item.id === product.id);
-    if (existingItemIndex > -1) {
-        // If it exists, increment the quantity
-        currentCart[existingItemIndex].quantity += 1;
-    } else {
-        // If it doesn't exist, add it with quantity 1
-        currentCart.push({ ...product, quantity: 1 });
-    }
-
-    localStorage.setItem('cartItems', JSON.stringify(currentCart));
-    console.log('Cart updated:', currentCart);
-};
-
-
-    const handleBuyNow = (product) => {
+    const handleAddToCart = async (product) => {
         const userEmail = localStorage.getItem('userEmail');
-        if (userEmail) {
-            navigate(`/fish/${product.id}`); // Navigate to the fish details page
-        } else {
-            navigate('/login');
+        if (!userEmail) {
+            return navigate('/login');
+        }
+    
+        try {
+            const response = await fetch('http://localhost:4000/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userEmail, // Send the user email
+                    fishId: product.id,
+                }),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to add to cart: ${errorData.error || response.statusText}`);
+            }
+    
+            const cartItem = await response.json();
+            console.log('Cart updated:', cartItem);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
         }
     };
     
 
+    const handleBuyNow = (product) => {
+        const userEmail = localStorage.getItem('userEmail');
+        if (userEmail) {
+            navigate(`/fish/${product.id}`);
+        } else {
+            navigate('/login');
+        }
+    };
 
     const fetchFishDetails = async () => {
         try {
             const response = await fetch('http://localhost:4000/fish');
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
             setCards(data);
         } catch (error) {
-            console.error('Error fetching fish details:', error);
+            console.error('Error fetching fish details:', error.message);
         }
     };
 

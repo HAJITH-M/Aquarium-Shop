@@ -8,6 +8,8 @@ import ProtectedRoute from './Auth/ProtectedRoute';
 import Checkout from './Components/CheckOut/Checkout';
 import FishDetails from './Components/FishDetails/FishDetails';
 import Cart from './Components/Cart/CartSection';
+import Carousel from './Components/CarouselSection/Carousel';
+import Demo from './Components/demo';
 
 const App = () => {
     return (
@@ -29,6 +31,8 @@ const App = () => {
 
 
             </Routes>
+            <Carousel/>
+            <Demo/>
         </Router>
     );
 };

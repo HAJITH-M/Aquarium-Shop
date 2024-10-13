@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    "https://ik.imagekit.io/k5gvskw6y/RL_Studio/background?updatedAt=1728397786285",
-    "https://ik.imagekit.io/k5gvskw6y/RL_Studio/background?updatedAt=1728397786285",
-    "https://ik.imagekit.io/k5gvskw6y/RL_Studio/background?updatedAt=1728397786285",
-    "https://ik.imagekit.io/k5gvskw6y/RL_Studio/background?updatedAt=1728397786285",
-    "https://ik.imagekit.io/k5gvskw6y/RL_Studio/background?updatedAt=1728397786285"
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/fish%20photos/neon%20tetra.jpg?updatedAt=1728803424118",
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/fish%20photos/guppy2.jpg?updatedAt=1728803423712",
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/fish%20photos/10-gal-tank.jpg?updatedAt=1728803424320",
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/fish%20photos/neon%20tetra.jpg?updatedAt=1728803424118",
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/fish%20photos/10-gal-tank.jpg?updatedAt=1728803424320",
   ];
 
   useEffect(() => {
