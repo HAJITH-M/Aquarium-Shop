@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
+    const navigate = useNavigate();
     
     const fetchCartItems = async () => {
         const userEmail = localStorage.getItem('userEmail');
@@ -26,7 +28,7 @@ const Cart = () => {
     const handleIncrease = async (id) => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
-    
+
         try {
             const response = await fetch(`http://localhost:4000/cart/${id}?userEmail=${userEmail}`, {
                 method: 'PATCH',
@@ -41,11 +43,10 @@ const Cart = () => {
     const handleDecrease = async (id) => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
-    
+
         try {
             const response = await fetch(`http://localhost:4000/cart/decrease/${id}?userEmail=${userEmail}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
             });
             if (!response.ok) throw new Error('Failed to update quantity');
             fetchCartItems();
@@ -54,34 +55,34 @@ const Cart = () => {
         }
     };
 
-
     const handleRemoveItem = async (id) => {
         const userEmail = localStorage.getItem('userEmail');
-        if (!userEmail) {
-            console.error('User email is missing');
-            return;
-        }
-    
+        if (!userEmail) return;
+
         try {
             const response = await fetch(`http://localhost:4000/cart/remove/${id}?userEmail=${encodeURIComponent(userEmail)}`, {
                 method: 'DELETE',
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
                 throw new Error(`Failed to remove item from cart: ${errorData.error || 'Unknown error'}`);
             }
-    
+
             fetchCartItems(); // Refresh cart items after removal
         } catch (error) {
             console.error('Error removing item from cart:', error);
         }
     };
-    
-    
-    
-    
-    
+
+    const handleCheckout = () => {
+        const userEmail = localStorage.getItem('userEmail');
+        if (!userEmail) {
+            alert('Please log in to proceed to checkout.');
+            return;
+        }
+        navigate('/checkout'); // Navigate to checkout page
+    };
 
     useEffect(() => {
         fetchCartItems();
@@ -91,7 +92,7 @@ const Cart = () => {
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
             {cartItems.length === 0 ? (
-                <p>Your cart is empty.</p>
+                <p>Your cart is empty, go back to Home and add some items to your cart.</p>
             ) : (
                 <div>
                     <ul>
@@ -128,7 +129,10 @@ const Cart = () => {
                             ))}
                     </ul>
                     <h3 className="text-lg font-semibold">Total: ₹{calculateTotal()}</h3>
-                    <button className="mt-4 text-white bg-blue-600 hover:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2">
+                    <button 
+                        onClick={handleCheckout} // Navigate to Checkout
+                        className="mt-4 text-white bg-blue-600 hover:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2"
+                    >
                         Proceed to Checkout
                     </button>
                 </div>

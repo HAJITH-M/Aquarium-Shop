@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SwipeCards = () => {
     const [cards, setCards] = useState([]);
@@ -30,11 +32,13 @@ const SwipeCards = () => {
     
             const cartItem = await response.json();
             console.log('Cart updated:', cartItem);
+            // Show success toast message
+            toast.success(`${product.title} added to cart!`);
         } catch (error) {
             console.error('Error adding to cart:', error);
+            toast.error('Error adding to cart. Please try again.');
         }
     };
-    
 
     const handleBuyNow = (product) => {
         const userEmail = localStorage.getItem('userEmail');
@@ -64,6 +68,7 @@ const SwipeCards = () => {
 
     return (
         <div className="overflow-x-auto scrollbar-hide mb-4 relative px-2 md:px-8 example mx-auto">
+            <ToastContainer />
             <div className="flex snap-x snap-mandatory gap-4 md:gap-6" style={{ width: 'max-content' }}>
                 {cards.map((card) => (
                     <div key={card.id} className="flex-none w-64 snap-center sm:w-80 md:w-64">

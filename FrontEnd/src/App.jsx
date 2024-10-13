@@ -27,8 +27,11 @@ const App = () => {
                 } />
 
 <Route path="/fish/:id" element={<FishDetails />} /> {/* New route for fish details */}
-<Route path="/cart" element={<Cart />} /> {/* New route for the cart */}
-
+<Route path="/cart" element={
+                    <ProtectedRoute>
+                        <Cart />
+                    </ProtectedRoute>
+                } />
 
             </Routes>
             <Carousel/>

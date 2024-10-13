@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Demo = () => {
+const Categories = () => {
     // Sample JSON data with images
     const data = [
         {
@@ -156,4 +156,4 @@ const Demo = () => {
     );
 };
 
-export default Demo;
+export default Categories;
