@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
     const [cartItems, setCartItems] = useState([]);
+    const [address, setAddress] = useState(''); // State for address input
     const navigate = useNavigate();
 
     const fetchCartItems = async () => {
@@ -23,7 +24,6 @@ const Checkout = () => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
 
-        // Here you can clear the cart items or do any other cleanup
         try {
             await Promise.all(cartItems.map(item => 
                 fetch(`http://localhost:4000/cart/remove/${item.id}?userEmail=${encodeURIComponent(userEmail)}`, {
@@ -40,6 +40,11 @@ const Checkout = () => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
 
+        if (!address) {
+            alert('Please enter your address to place the order.');
+            return;
+        }
+
         try {
             await Promise.all(cartItems.map(item =>
                 fetch(`http://localhost:4000/orders`, {
@@ -51,6 +56,7 @@ const Checkout = () => {
                         userEmail,
                         fishId: item.fish.id,
                         quantity: item.quantity,
+                        address, // Include address in the order
                     }),
                 })
             ));
@@ -70,8 +76,7 @@ const Checkout = () => {
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Checkout</h2>
             {cartItems.length === 0 ? (
-
-                <p>Your cart is empty, go back to Home and add some items to your cart. </p>
+                <p>Your cart is empty, go back to Home and add some items to your cart.</p>
             ) : (
                 <div>
                     <ul>
@@ -84,6 +89,14 @@ const Checkout = () => {
                             </li>
                         ))}
                     </ul>
+                    <input
+                        type="text"
+                        placeholder="Enter your address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="mt-2 p-2 border rounded"
+                        required
+                    />
                     <button onClick={handlePlaceOrder} className="mt-4 text-white bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-2">
                         Place Order
                     </button>

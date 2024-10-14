@@ -7,6 +7,7 @@ const FishDetails = () => {
     const [error, setError] = useState('');
     const [billing, setBilling] = useState(null);
     const [orderPlaced, setOrderPlaced] = useState(false);
+    const [address, setAddress] = useState(''); // State for address input
 
     const fetchFishDetails = async () => {
         try {
@@ -39,6 +40,11 @@ const FishDetails = () => {
             return;
         }
 
+        if (!address) {
+            setError('Address is required to place an order.');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:4000/orders', {
                 method: 'POST',
@@ -49,12 +55,14 @@ const FishDetails = () => {
                     userEmail,
                     fishId: fish.id,
                     quantity: 1,
+                    address, // Include address in the order
                 }),
             });
 
             if (response.ok) {
                 setOrderPlaced(true);
                 setBilling(null); // Reset billing after order is placed
+                setAddress(''); // Reset address after order is placed
             } else {
                 throw new Error('Failed to place order');
             }
@@ -77,6 +85,14 @@ const FishDetails = () => {
             {billing && (
                 <div className="mt-4">
                     <p>Total Bill: ₹{billing.toFixed(2)}</p>
+                    <input
+                        type="text"
+                        placeholder="Enter your address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="mt-2 p-2 border rounded"
+                        required
+                    />
                     <button onClick={placeOrder} className="mt-2 p-2 bg-green-500 text-white">Place Order (COD)</button>
                 </div>
             )}

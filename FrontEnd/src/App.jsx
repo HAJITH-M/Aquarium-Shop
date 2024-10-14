@@ -10,6 +10,8 @@ import FishDetails from './Components/FishDetails/FishDetails';
 import Cart from './Components/Cart/CartSection';
 import Carousel from './Components/CarouselSection/Carousel';
 import Demo from './Components/demo';
+import UploadFishCard from './Components/Cards/UploadCards';
+import CategorySwipeCards from './Components/Cards/CategorySwipeCards';
 
 const App = () => {
     return (
@@ -19,6 +21,8 @@ const App = () => {
 
             <Routes>
                 <Route path="/" element={<SwipeCards />} />
+                <Route path="/upload" element={<UploadFishCard />} />
+
                 <Route path="/login" element={<Login />} />
                 <Route path="/checkout" element={
                     <ProtectedRoute>
@@ -32,10 +36,10 @@ const App = () => {
                         <Cart />
                     </ProtectedRoute>
                 } />
-
+ 
             </Routes>
             <Carousel/>
-            <Demo/>
+            <CategorySwipeCards/>
         </Router>
     );
 };

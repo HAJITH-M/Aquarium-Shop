@@ -4,6 +4,8 @@ const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
 // require('dotenv').config(); // Load environment variables from a .env file
 
 const app = express();
@@ -14,6 +16,16 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
+
+
+// Create a transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Use your email service
+    auth: {
+        user: "wpage2098@gmail.com", // Your email address
+        pass: "tuab eqkt qbrm xeif", // Your email password
+    },
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Change this to a secure secret
 
@@ -73,23 +85,23 @@ app.post('/signin', async (req, res) => {
     }
 });
 
-// POST: Create new fish details
-app.post('/fish', async (req, res) => {
-    const fishArray = req.body;
+// // POST: Create new fish details
+// app.post('/fish', async (req, res) => {
+//     const fishArray = req.body;
 
-    const fishData = Array.isArray(fishArray) ? fishArray : [fishArray];
+//     const fishData = Array.isArray(fishArray) ? fishArray : [fishArray];
 
-    try {
-        const fishPromises = fishData.map(fish => 
-            prisma.fishDetails.create({ data: fish })
-        );
-        const fishRecords = await Promise.all(fishPromises);
-        res.status(201).json(fishRecords);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
-});
+//     try {
+//         const fishPromises = fishData.map(fish => 
+//             prisma.fishDetails.create({ data: fish })
+//         );
+//         const fishRecords = await Promise.all(fishPromises);
+//         res.status(201).json(fishRecords);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
 // GET: Display all fish details
 app.get('/fish', async (req, res) => {
@@ -263,8 +275,42 @@ app.delete('/cart/remove/:id', async (req, res) => {
 });
 
 // POST: Place an order
+// app.post('/orders', async (req, res) => {
+//     const { userEmail, fishId, quantity } = req.body;
+
+//     try {
+//         // Validate that the user exists
+//         const user = await prisma.user.findUnique({ where: { email: userEmail } });
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+
+//         // Validate that the fish exists
+//         const fish = await prisma.fishDetails.findUnique({ where: { id: fishId } });
+//         if (!fish) {
+//             return res.status(404).json({ error: 'Fish not found' });
+//         }
+
+//         // Create the order
+//         const order = await prisma.order.create({
+//             data: {
+//                 userEmail,
+//                 fishId,
+//                 quantity,
+//             },
+//         });
+
+//         res.status(201).json(order);
+//     } catch (error) {
+//         console.error('Error placing order:', error);
+//         res.status(500).json({ error: 'Failed to place order' });
+//     }
+// });
+
+// POST: Place an order
+// POST: Place an order
 app.post('/orders', async (req, res) => {
-    const { userEmail, fishId, quantity } = req.body;
+    const { userEmail, fishId, quantity, address } = req.body; // Include address
 
     try {
         // Validate that the user exists
@@ -285,7 +331,24 @@ app.post('/orders', async (req, res) => {
                 userEmail,
                 fishId,
                 quantity,
+                address, // Save the address
             },
+        });
+
+        // Send email notification
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: 'Order Confirmation',
+            text: `Your order has been placed successfully!\n\nOrder Details:\nFish: ${fish.title}\nQuantity: ${quantity}\nAddress: ${address}\nTotal Price: ₹${(fish.price * quantity).toFixed(2)}\n\nThank you for your purchase!`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).json({ error: 'Order placed, but failed to send email' });
+            }
+            console.log('Email sent:', info.response);
         });
 
         res.status(201).json(order);
@@ -294,6 +357,57 @@ app.post('/orders', async (req, res) => {
         res.status(500).json({ error: 'Failed to place order' });
     }
 });
+
+
+// POST: Create a new category
+app.post('/categories', async (req, res) => {
+    const { name } = req.body;
+
+    try {
+        const category = await prisma.category.create({
+            data: { name },
+        });
+        res.status(201).json(category);
+    } catch (error) {
+        console.error('Error creating category:', error);
+        res.status(500).json({ error: 'Failed to create category' });
+    }
+});
+
+// GET: Retrieve all categories
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await prisma.category.findMany();
+        res.status(200).json(categories);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+
+
+// POST: Create new fish details
+app.post('/fish', async (req, res) => {
+    const { image, title, description, price, link, categoryId } = req.body;
+
+    try {
+        const fishDetails = await prisma.fishDetails.create({
+            data: {
+                image,
+                title,
+                description,
+                price,
+                link,
+                categoryId, // Optional foreign key
+            },
+        });
+        res.status(201).json(fishDetails);
+    } catch (error) {
+        console.error('Error creating fish details:', error);
+        res.status(500).json({ error: 'Failed to create fish details' });
+    }
+});
+
 
 // Start the server
 const PORT = process.env.PORT || 4000;

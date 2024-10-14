@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Pay Integration</title>
+    <!-- Load the Google Pay JavaScript library in the head section -->
+    <script async src="https://pay.google.com/gp/p/js/pay.js"></script>
+</head>
+<body>
+
+<!-- Add a container for the Google Pay button -->
+<div id="google-pay-button"></div>
+
+<script>
+    // Ensure the code runs after the Google Pay library has fully loaded
+    window.onload = function () {
+        const paymentsClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
+
+        const paymentDataRequest = {
+    apiVersion: 2,
+    apiVersionMinor: 0,
+    allowedPaymentMethods: [{
+        type: 'CARD',
+        parameters: {
+            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+            allowedCardNetworks: ['MASTERCARD', 'VISA']
+        },
+        tokenizationSpecification: {
+            type: 'PAYMENT_GATEWAY',
+            parameters: {
+                gateway: 'example', // Replace 'example' with your gateway name
+                gatewayMerchantId: 'your-merchant-id' // Replace with your merchant ID
+            }
+        }
+    },
+    {
+        type: 'TOKENIZED_CARD',
+        parameters: {
+            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+            allowedCardNetworks: ['MASTERCARD', 'VISA']
+        },
+        tokenizationSpecification: {
+            type: 'PAYMENT_GATEWAY',
+            parameters: {
+                gateway: 'example', // Replace 'example' with your gateway name
+                gatewayMerchantId: 'your-merchant-id' // Replace with your merchant ID
+            }
+        }
+    }],
+    merchantInfo: {
+        merchantId: 'your-merchant-id', // Replace with your Google merchant ID
+        merchantName: 'Your Business Name'
+    },
+    transactionInfo: {
+        totalPriceStatus: 'FINAL',
+        totalPrice: '10.00',
+        currencyCode: 'USD',
+        countryCode: 'US'
+    }
+};
+
+
+        // Create the Google Pay button
+        paymentsClient.isReadyToPay({ allowedPaymentMethods: paymentDataRequest.allowedPaymentMethods })
+            .then(function(response) {
+                if (response.result) {
+                    const button = paymentsClient.createButton({
+                        onClick: () => onGooglePayButtonClicked()
+                    });
+                    document.getElementById('google-pay-button').appendChild(button);
+                }
+            })
+            .catch(function(err) {
+                console.error('Error determining readiness to use Google Pay: ', err);
+            });
+
+        function onGooglePayButtonClicked() {
+            paymentsClient.loadPaymentData(paymentDataRequest)
+                .then(function(paymentData) {
+                    // Handle the payment data returned by Google Pay
+                    console.log('Payment successful!', paymentData);
+                })
+                .catch(function(err) {
+                    console.error('Error with payment data request: ', err);
+                });
+        }
+    };
+</script>
+
+</body>
+</html>

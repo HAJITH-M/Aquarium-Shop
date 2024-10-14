@@ -49,11 +49,13 @@ model Order {
   fishId    Int
   quantity  Int
   createdAt DateTime @default(now())
+  address   String   // New field for address
 
   user      User      @relation(fields: [userEmail], references: [email])
   fish      FishDetails @relation(fields: [fishId], references: [id])
 }
 
+ 
 model Category {
   id          Int         @id @default(autoincrement())
   name        String      @unique
