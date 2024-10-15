@@ -12,7 +12,7 @@ const Cart = () => {
         if (!userEmail) return;
 
         try {
-            const response = await fetch(`http://localhost:4000/cart?userEmail=${userEmail}`);
+            const response = await fetch(`https://aquarium-shop-ltwi.onrender.com/cart?userEmail=${userEmail}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch cart items');
             }
@@ -34,7 +34,7 @@ const Cart = () => {
         if (!userEmail) return;
 
         try {
-            const response = await fetch(`http://localhost:4000/cart/${id}?userEmail=${userEmail}`, {
+            const response = await fetch(`https://aquarium-shop-ltwi.onrender.com/cart/${id}?userEmail=${userEmail}`, {
                 method: 'PATCH',
             });
             if (!response.ok) throw new Error('Failed to update quantity');
@@ -49,7 +49,7 @@ const Cart = () => {
         if (!userEmail) return;
 
         try {
-            const response = await fetch(`http://localhost:4000/cart/decrease/${id}?userEmail=${userEmail}`, {
+            const response = await fetch(`https://aquarium-shop-ltwi.onrender.com/cart/decrease/${id}?userEmail=${userEmail}`, {
                 method: 'PATCH',
             });
             if (!response.ok) throw new Error('Failed to update quantity');
@@ -64,7 +64,7 @@ const Cart = () => {
         if (!userEmail) return;
 
         try {
-            const response = await fetch(`http://localhost:4000/cart/remove/${id}?userEmail=${encodeURIComponent(userEmail)}`, {
+            const response = await fetch(`https://aquarium-shop-ltwi.onrender.com/cart/remove/${id}?userEmail=${encodeURIComponent(userEmail)}`, {
                 method: 'DELETE',
             });
 

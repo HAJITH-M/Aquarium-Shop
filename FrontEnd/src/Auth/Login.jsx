@@ -11,7 +11,7 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:4000/signin', {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:4000/signup', {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

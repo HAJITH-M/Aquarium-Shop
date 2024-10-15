@@ -15,7 +15,7 @@ const CategorySwipeCards = () => {
         }
     
         try {
-            const response = await fetch('http://localhost:4000/cart', {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const CategorySwipeCards = () => {
 
     const fetchFishDetails = async () => {
         try {
-            const response = await fetch('http://localhost:4000/fish');
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/fish');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -71,7 +71,7 @@ const CategorySwipeCards = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:4000/categories');
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/categories');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

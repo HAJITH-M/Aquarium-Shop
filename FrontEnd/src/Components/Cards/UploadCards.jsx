@@ -15,7 +15,7 @@ const AddFishDetailsForm = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:4000/categories');
+                const response = await fetch('https://aquarium-shop-ltwi.onrender.com/categories');
                 const data = await response.json();
                 setCategories(data);
             } catch (error) {
@@ -35,7 +35,7 @@ const AddFishDetailsForm = () => {
         e.preventDefault();
         console.log('Submitting fish details:', fishDetails); // Debugging log
         try {
-            const response = await fetch('http://localhost:4000/fish', {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/fish', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

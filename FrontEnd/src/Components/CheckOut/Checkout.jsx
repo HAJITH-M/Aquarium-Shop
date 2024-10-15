@@ -25,7 +25,7 @@ const Checkout = () => {
         if (!userEmail) return;
 
         try {
-            const response = await fetch(`http://localhost:4000/cart?userEmail=${userEmail}`);
+            const response = await fetch(`https://aquarium-shop-ltwi.onrender.com/cart?userEmail=${userEmail}`);
             if (!response.ok) throw new Error('Failed to fetch cart items');
             const data = await response.json();
             setCartItems(data);
@@ -42,7 +42,7 @@ const Checkout = () => {
 
         try {
             await Promise.all(cartItems.map(item => 
-                fetch(`http://localhost:4000/cart/remove/${item.id}?userEmail=${encodeURIComponent(userEmail)}`, {
+                fetch(`https://aquarium-shop-ltwi.onrender.com/cart/remove/${item.id}?userEmail=${encodeURIComponent(userEmail)}`, {
                     method: 'DELETE',
                 })
             ));
@@ -63,7 +63,7 @@ const Checkout = () => {
 
         try {
             await Promise.all(cartItems.map(item =>
-                fetch(`http://localhost:4000/orders`, {
+                fetch(`https://aquarium-shop-ltwi.onrender.com/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
