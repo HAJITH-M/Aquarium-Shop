@@ -12,15 +12,16 @@ import Carousel from './Components/CarouselSection/Carousel';
 import Demo from './Components/demo';
 import UploadFishCard from './Components/Cards/UploadCards';
 import CategorySwipeCards from './Components/Cards/CategorySwipeCards';
+import HomePage from './Pages/HomePage';
 
 const App = () => {
     return (
         <Router>
             <Navbar />
-            <HeroSection />
+            {/* <HeroSection /> */}
 
             <Routes>
-                <Route path="/" element={<SwipeCards />} />
+                <Route path="/" element={<HomePage/>} />
                 <Route path="/upload" element={<UploadFishCard />} />
 
                 <Route path="/login" element={<Login />} />
@@ -38,8 +39,8 @@ const App = () => {
                 } />
  
             </Routes>
-            <Carousel/>
-            <CategorySwipeCards/>
+            {/* <Carousel/>
+            <CategorySwipeCards/> */}
         </Router>
     );
 };

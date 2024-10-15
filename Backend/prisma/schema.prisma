@@ -19,6 +19,8 @@ model User {
   orders    Order[]   // Relation to Order
 }
 
+
+
 model FishDetails {
   id          Int       @id @default(autoincrement())
   image       String

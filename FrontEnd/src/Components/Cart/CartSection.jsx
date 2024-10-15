@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete, AiOutlineLoading } from 'react-icons/ai';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
-    const navigate = useNavigate();
-    
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate(); 
+
     const fetchCartItems = async () => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
@@ -16,8 +18,10 @@ const Cart = () => {
             }
             const data = await response.json();
             setCartItems(data);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error fetching cart items:', error);
+            setIsLoading(false);
         }
     };
 
@@ -39,7 +43,7 @@ const Cart = () => {
             console.error('Error increasing quantity:', error);
         }
     };
-    
+
     const handleDecrease = async (id) => {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) return;
@@ -89,47 +93,55 @@ const Cart = () => {
     }, []);
 
     return (
-        <div className="p-4">
+        <div className="container mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
-            {cartItems.length === 0 ? (
-                <p>Your cart is empty, go back to Home and add some items to your cart.</p>
+            {isLoading ? (
+ <div className="flex flex-col justify-center items-center h-screen">
+ <AiOutlineLoading className="text-4xl text-blue-500 animate-spin" />
+ <p className="mt-4 text-lg text-gray-600">Loading...</p>
+</div>
+            ) : cartItems.length === 0 ? (
+                <p className="text-lg text-gray-500">Your cart is empty, go back to Home and add some items to your cart.</p>
             ) : (
                 <div>
                     <ul>
                         {cartItems
                             .sort((a, b) => a.fish.title.localeCompare(b.fish.title)) // Sort by title
                             .map((item) => (
-                                <li key={item.id} className="flex justify-between mb-4">
-                                    <div>
-                                        <h3 className="font-semibold">{item.fish.title}</h3>
-                                        <span>₹{item.fish.price.toFixed(2)} x {item.quantity}</span>
+                                <li key={item.id} className="flex justify-between mb-4 border-b border-gray-200 pb-4">
+                                    <div className="flex items-center">
+                                        <img src={item.fish.image} alt={item.fish.title} className="w-20 h-20 object-cover mr-4" />
+                                        <div>
+                                            <h3 className="font-semibold">{item.fish.title}</h3>
+                                            <span className="text-lg text-gray-500">₹{item.fish.price.toFixed(2)} x {item.quantity}</span>
+                                        </div>
                                     </div>
                                     <div className="flex items-center">
                                         <button
                                             onClick={() => handleDecrease(item.id)}
                                             className="text-blue-600 mr-2"
                                         >
-                                            -
+                                            <AiOutlineMinus />
                                         </button>
-                                        <span>{item.quantity}</span>
+                                        <span className="text-lg">{item.quantity}</span>
                                         <button
                                             onClick={() => handleIncrease(item.id)}
                                             className="text-blue-600 ml-2"
                                         >
-                                            +
+                                            <AiOutlinePlus />
                                         </button>
                                         <button
                                             onClick={() => handleRemoveItem(item.id)}
                                             className="text-red-500 hover:underline ml-4"
                                         >
-                                            Remove
+                                            <AiOutlineDelete />
                                         </button>
                                     </div>
                                 </li>
                             ))}
                     </ul>
                     <h3 className="text-lg font-semibold">Total: ₹{calculateTotal()}</h3>
-                    <button 
+                    <button
                         onClick={handleCheckout} // Navigate to Checkout
                         className="mt-4 text-white bg-blue-600 hover:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2"
                     >
