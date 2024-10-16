@@ -18,7 +18,7 @@ const Orders = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:4000/orders', {
+                const response = await axios.get('https://aquarium-shop-ltwi.onrender.com/orders', {
                     headers: {
                         'useremail': email,
                     },
