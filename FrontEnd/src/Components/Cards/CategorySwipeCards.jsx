@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaTimes } from 'react-icons/fa';
+
+import { FaTimes, FaSearch } from 'react-icons/fa';
 
 const CategorySwipeCards = () => {
     const [categories, setCategories] = useState([]);
     const [fishDetails, setFishDetails] = useState({});
     const [selectedCard, setSelectedCard] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
     const handleAddToCart = async (product) => {
@@ -85,11 +88,13 @@ const CategorySwipeCards = () => {
     };
 
     useEffect(() => {
-        fetchCategories();
-        fetchFishDetails();
+        const fetchData = async () => {
+            setLoading(true);
+            await Promise.all([fetchCategories(), fetchFishDetails()]);
+            setLoading(false);
+        };
+        fetchData();
     }, []);
-
-
 
     useEffect(() => {
         if (selectedCard) {
@@ -105,8 +110,8 @@ const CategorySwipeCards = () => {
 
     const truncateDescription = (description, lines = 3) => {
         const words = description.split(' ');
-        const truncated = words.slice(0, lines * 4).join(' ');
-        return truncated + (words.length > lines * 4 ? '...' : '');
+        const truncated = words.slice(0, lines * 1).join(' ');
+        return truncated + (words.length > lines * 1 ? '...' : '');
     };
 
     const renderStructuredDescription = (description) => {
@@ -136,49 +141,104 @@ const CategorySwipeCards = () => {
         );
     };
 
+    const SkeletonLoader = () => (
+        <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+                {[...Array(5)].map((_, index) => (
+                    <div key={index} className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4 shadow-md h-full flex flex-col">
+                        <div className="w-full h-48 bg-gray-300"></div>
+                        <div className="p-4 flex flex-col flex-grow">
+                            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                            <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
+                            <div className="flex flex-col md:flex-row md:justify-between space-y-2 md:space-y-0 md:space-x-6">
+                                <div className="h-10 bg-gray-200 rounded w-full md:w-1/2"></div>
+                                <div className="h-10 bg-gray-200 rounded w-full md:w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+
+    const filteredFishDetails = Object.keys(fishDetails).reduce((acc, categoryId) => {
+        acc[categoryId] = fishDetails[categoryId].filter(fish =>
+            fish.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        return acc;
+    }, {});
+
+    const hasResults = Object.values(filteredFishDetails).some(category => category.length > 0);
+
     return (
-        <div className="overflow-x-auto scrollbar-hide mb-4 relative px-2 md:px-8 example mx-auto">
+        <div className="px-2 md:px-8 mx-auto">
             <ToastContainer />
-            {categories.map(category => (
-                <div key={category.id} className="mb-6">
-                    <h2 className="text-2xl font-bold mb-4">{category.name}</h2>
-                    <div className="flex snap-x snap-mandatory gap-4 md:gap-6" style={{ width: 'max-content' }}>
-                        {fishDetails[category.id]?.map((card) => (
-                            <div key={card.id} className="flex-none w-64 snap-center">
-                                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4 shadow-md h-full flex flex-col">
+            <div className="mb-6 relative">
+                <div className="flex justify-center mb-6">
+                    <div className="relative w-full max-w-md">
+                        <input
+                            type="text"
+                            placeholder="Search fish..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    </div>
+                </div>
+            </div>
+            {loading ? (
+                <SkeletonLoader />
+            ) : hasResults ? (
+                categories.map(category => {
+                    const categoryFish = filteredFishDetails[category.id] || [];
+                    if (categoryFish.length === 0) return null;
 
-                                    <img src={card.image} alt={card.title} className="w-full h-52 object-cover" />
-                                    <div className="p-4 flex flex-col flex-grow">
-                                        <h3 className="text-lg leading-6 font-bold text-gray-900">{card.title}</h3>
-
-
-                                        <p className="text-gray-600 mt-1 text-sm cursor-pointer flex-grow" onClick={() => setSelectedCard(card)}>
-                                            {truncateDescription(card.description)}
-                                        </p>
-                                        <div className="flex flex-col space-y-4 justify-end ">
-                                            <span className="text-xl font-extrabold text-gray-900">₹{card.price.toFixed(2)}</span>
-                                            <div className="flex space-x-8">
-                                                <button
-                                                    onClick={() => handleAddToCart(card)}
-                                                    className="text-white bg-fuchsia-950 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-3"
-                                                >
-                                                    Add to Cart
-                                                </button>
-                                                <button
-                                                    onClick={() => handleBuyNow(card)}
-                                                    className="text-white bg-green-600 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-3"
-                                                >
-                                                    Buy Now
-                                                </button>
+                    return (
+                        <div key={category.id} className="mb-6">
+                            <h2 className="text-2xl font-bold mb-4">{category.name}</h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+                                {categoryFish.map((card) => (
+                                    <div key={card.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4 shadow-md h-full flex flex-col">
+                                        <img src={card.image} alt={card.title} className="w-full  object-cover" />
+                                        <div className="p-4 flex flex-col flex-grow">
+                                            <h3 className="text-lg leading-6 font-bold text-gray-900">{card.title}</h3>
+                                            <p className="text-gray-600 mt-1 text-sm cursor-pointer flex-grow" onClick={() => setSelectedCard(card)}>
+                                                {truncateDescription(card.description)}
+                                            </p>
+                                            <div className="flex flex-col  space-y-4 justify-end ">
+                                                <span className="text-xl font-extrabold text-gray-900">₹{card.price.toFixed(2)}</span>
+                                                <div className="flex flex-col md:flex-row md:justify-between space-y-2 md:space-y-0 md:space-x-6">
+                                                    <button
+                                                        onClick={() => handleAddToCart(card)}
+                                                        className="text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-3"
+                                                    >
+                                                        Add to Cart
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleBuyNow(card)}
+                                                        className="text-white bg-teal-600 hover:bg-teal-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-3"
+                                                    >
+                                                        Buy Now
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    );
+                })
+            ) : (
+                <div className="text-center py-10">
+                    <p className="text-xl text-gray-600">No results found for "{searchTerm}". Please try a different search term.</p>
                 </div>
-            ))}
+            )}
             {selectedCard && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">

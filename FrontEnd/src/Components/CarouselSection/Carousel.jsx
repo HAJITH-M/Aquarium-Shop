@@ -6,7 +6,7 @@ const Carousel = () => {
   const images = [
     "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/fish-aquarium-hd-8k-wallpaper-stock-photographic-image_979520-12123.jpg",
     "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/R.9ca8ca6285b2a3913d850c47f1a68369_rik=L2j69QDfKUjk1Q&riu=http_3a_2f_2fwww.pixelstalk.net_2fwp-content_2fuploads_2f2016_2f11_2fFree-Fish-Tank-Screensavers-Aquarium.jpg&ehk=A6ojUYkVr7Che9HqZxKQeVvQbvW4Wgw3xGekv63Bq00_3d&risl=&pid=ImgRaw&r=0?updatedAt=1729070015594",
-    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/maxresdefault.jpg",
+    "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/sea-water-aquarium-captures-caral-tropical-fishes_505557-5668.jpg",
     "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/R.da0d33d679b395c2c87cc2116227697a_rik=Yngy8aPaFS44xQ&riu=http_3a_2f_2fperfectaquatics.com_2fcdn_2fshop_2farticles_2fAquarium_543275b5-bc77-4640-8c42-25347dcb17e5.jpg_3fv_3d1703138110&ehk=pjI0FVN445Ged2FHlJ1046l12qkHaMPxi9n_2fr8h0VmM_3d&risl=&pid=ImgRaw&r=0",
     // "https://ik.imagekit.io/k5gvskw6y/Aquarium_Shop/Carousal-Images/OIP.-DQN6nUHJ_OjeTY5hes_xAHaFj_rs=1&pid=ImgDetMain?updatedAt=1729070138200",
   ];
@@ -22,7 +22,7 @@ const Carousel = () => {
   return (
     <div id="default-carousel" className="relative w-full my-10" data-carousel="slide">
       {/* Carousel wrapper */}
-      <div className="relative h-56 overflow-hidden rounded-lg md:h-96 w-[75%] mx-auto">
+      <div className="relative h-[300px] overflow-hidden rounded-lg w-[95%] md:h-[550px] md:w-[85%] mx-auto">
         {images.map((src, index) => (
           <div
             key={index}

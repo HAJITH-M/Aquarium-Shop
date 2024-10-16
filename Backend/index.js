@@ -43,6 +43,11 @@ const authenticateJWT = (req, res, next) => {
     }
 };
 
+// Health check endpoint
+app.get('/', (req, res) => {
+    res.json({ message: 'Server is running' });
+});
+
 // POST: Signup
 app.post('/signup', async (req, res) => {
     const { email, password } = req.body;
@@ -407,6 +412,28 @@ app.post('/fish', async (req, res) => {
         res.status(500).json({ error: 'Failed to create fish details' });
     }
 });
+
+
+// GET: Retrieve all orders
+app.get('/orders', async (req, res) => {
+    const userEmail = req.headers['useremail']; // Get email from headers
+
+    if (!userEmail) {
+        return res.status(401).json({ error: 'Unauthorized: No email provided' });
+    }
+
+    try {
+        const orders = await prisma.order.findMany({
+            where: { userEmail: userEmail },
+            include: { fish: true }, // Include fish details if necessary
+        });
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Failed to fetch orders' });
+    }
+});
+
 
 
 // Start the server
