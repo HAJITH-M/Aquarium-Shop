@@ -6,7 +6,7 @@ const AddCategoryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:4000/categories', {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/categories', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
