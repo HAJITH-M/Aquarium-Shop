@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.element::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar */
+}
+
+.element {
+    overflow: -moz-scrollbars-none; /* Hides the scrollbar */
+}

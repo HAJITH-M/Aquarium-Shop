@@ -12,17 +12,17 @@ const AddFishDetailsForm = () => {
     });
     const [categories, setCategories] = useState([]);
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch('https://aquarium-shop-ltwi.onrender.com/categories');
-                const data = await response.json();
-                setCategories(data);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('https://aquarium-shop-ltwi.onrender.com/categories');
+            const data = await response.json();
+            setCategories(data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchCategories();
     }, []);
 
@@ -61,7 +61,7 @@ const AddFishDetailsForm = () => {
 
     return (
         <>
-            <AddCategoryForm />
+            <AddCategoryForm onCategoryAdded={fetchCategories} />
             <br />
             <form onSubmit={handleSubmit}>
                 <h2>Add Fish Details</h2>
@@ -107,7 +107,7 @@ const AddFishDetailsForm = () => {
                     name="categoryId"
                     value={fishDetails.categoryId}
                     onChange={handleChange}
-                    
+                    onClick={fetchCategories}
                 >
                     <option value="">Select Category</option>
                     {categories.map((category) => (
