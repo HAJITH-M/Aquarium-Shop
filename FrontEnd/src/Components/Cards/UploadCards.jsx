@@ -107,7 +107,7 @@ const AddFishDetailsForm = () => {
                     name="categoryId"
                     value={fishDetails.categoryId}
                     onChange={handleChange}
-                    required
+                    
                 >
                     <option value="">Select Category</option>
                     {categories.map((category) => (
